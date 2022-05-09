@@ -1,10 +1,12 @@
-from parser.lexer_handlers import get_initial_token_type
+from parser.lexer_handlers import handle_new_token
 from parser.lexer_handlers import handle_string_literal
+from parser.lexer_handlers import handle_number_literal
 
 class MachineState:
     token_start = None
     token_type = None
     string_escape = False
+    decimal_point_consumed = False
 
 def scan_and_evaluate(input):
     # initialize output array and finite state machine
@@ -13,8 +15,9 @@ def scan_and_evaluate(input):
 
     # dictionary of handlers for various token types
     handlers = {
-        None: get_initial_token_type,
-        "string-literal": handle_string_literal
+        None: handle_new_token,
+        "string-literal": handle_string_literal,
+        "number-literal": handle_number_literal
     }
 
     # iterate over input string
