@@ -1,12 +1,22 @@
+import sys
 from parser.lexer import scan_and_evaluate
+from parser.diagnostic import diagnose_lexer_errors
 
-input = """
-+++ 5.5"jezus" && "5"
-"""
+# print usage information
+if len(sys.argv) < 3:
+    print("Usage: python preliminary_parser.py [grammar file] [input file]")
+    exit()
 
-output = scan_and_evaluate(input)
+# read files
+grammar_file_path = sys.argv[1]
+input_file_path = sys.argv[2]
 
-print("Found {} tokens:".format(len(output)))
+with open(grammar_file_path, "r") as f:
+    grammar_file_raw = f.read()
+with open(input_file_path, "r") as f:
+    input_file_raw = f.read()
 
-for token in output:
-    print("{}: `{}`".format(token.type, token.value))
+# tokenize grammar file
+grammar_tokens = scan_and_evaluate(grammar_file_raw)
+if diagnose_lexer_errors(grammar_tokens, grammar_file_raw, grammar_file_path):
+    exit(1)

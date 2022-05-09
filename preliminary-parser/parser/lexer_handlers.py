@@ -3,6 +3,7 @@ class Token:
         self.type = type
         self.value = value
         self.position = position
+        self.length = len(value)
 
 def get_char(input, i):
     return input[i] if i >= 0 and i < len(input) else None
