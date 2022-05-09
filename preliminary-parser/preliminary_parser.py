@@ -1,7 +1,7 @@
 from parser.lexer import scan_and_evaluate
 
 input = """
-"jezus" & "maria" & 123.
++++ 5.5"jezus" && "5"
 """
 
 output = scan_and_evaluate(input)
