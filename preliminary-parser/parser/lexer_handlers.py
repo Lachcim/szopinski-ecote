@@ -24,9 +24,9 @@ def handle_new_token(machine_state, i, input, output):
 
     # identify token type
     if char in "\"'":
-        machine_state.token_type = "string-literal"
+        machine_state.token_type = "string_literal"
     elif char in "0123456789":
-        machine_state.token_type = "number-literal"
+        machine_state.token_type = "number_literal"
     elif (char.lower() >= "a" and char.lower() <= "z") or char == "_":
         machine_state.token_type = "identifier"
     else:
@@ -56,7 +56,7 @@ def handle_string_literal(machine_state, i, input, output):
     # string terminates on the same quote that it started on
     if char == input[machine_state.token_start]:
         lexeme = input[machine_state.token_start:(i + 1)]
-        output.append(Token("string-literal", lexeme, machine_state.token_start))
+        output.append(Token("string_literal", lexeme, machine_state.token_start))
         machine_state.token_type = None
         return
 
@@ -74,7 +74,7 @@ def handle_number_literal(machine_state, i, input, output):
         else:
             # dot belongs to auxillary token and marks the end of this literal
             lexeme = input[machine_state.token_start:i]
-            output.append(Token("number-literal", lexeme, machine_state.token_start))
+            output.append(Token("number_literal", lexeme, machine_state.token_start))
 
             machine_state.token_start = i
             machine_state.token_type = "auxillary"
@@ -89,7 +89,7 @@ def handle_number_literal(machine_state, i, input, output):
 
     # non-digit, non-dot, non-identifier terminates the literal
     lexeme = input[machine_state.token_start:i]
-    output.append(Token("number-literal", lexeme, machine_state.token_start))
+    output.append(Token("number_literal", lexeme, machine_state.token_start))
 
     machine_state.decimal_point_consumed = False
     machine_state.token_type = None
@@ -109,7 +109,7 @@ def handle_auxillary(machine_state, i, input, output):
             output.append(Token("auxillary", lexeme, machine_state.token_start))
 
         machine_state.token_start = i - 1
-        machine_state.token_type = "number-literal"
+        machine_state.token_type = "number_literal"
         return
 
     # terminate on identifier, number, string or whitespace

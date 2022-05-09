@@ -20,8 +20,8 @@ def scan_and_evaluate(input):
     # dictionary of handlers for various token types
     handlers = {
         None: handle_new_token,
-        "string-literal": handle_string_literal,
-        "number-literal": handle_number_literal,
+        "string_literal": handle_string_literal,
+        "number_literal": handle_number_literal,
         "identifier": handle_identifier,
         "auxillary": handle_auxillary,
         "invalid": handle_invalid
