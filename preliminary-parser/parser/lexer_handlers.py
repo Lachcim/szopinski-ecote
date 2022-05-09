@@ -97,7 +97,15 @@ def handle_number_literal(machine_state, i, input, output):
     machine_state.rescan = True
 
 def handle_identifier(machine_state, i, input, output):
-    pass
+    char = get_char(input, i)
+
+    # non-alphanumeric, non-underscore terminates the identifier
+    if (char.lower() < "a" or char.lower() > "z") and char not in "0123456789_":
+        lexeme = input[machine_state.token_start:i]
+        output.append(Token("identifier", lexeme, machine_state.token_start))
+
+        machine_state.token_type = None
+        machine_state.rescan = True
 
 def handle_auxillary(machine_state, i, input, output):
     char = get_char(input, i)

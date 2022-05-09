@@ -24,8 +24,9 @@ def print_diagnostic(input, file_path, index, length, error):
     line_end = line_end if line_end != -1 else len(input)
     error_start = index - line_start
     file_name = os.path.basename(file_path)
+    line_no = input.count("\n", 0, index) + 1
 
-    print("Error in {}, line {}:".format(file_name), file=sys.stderr)
+    print("Error in {}, line {}:".format(file_name, line_no), file=sys.stderr)
     print(input[line_start:line_end], file=sys.stderr)
     print("{}{}".format(error_start * " ", length * "^"), file=sys.stderr)
     print("{}{}".format(error_start * " ", error), file=sys.stderr)
