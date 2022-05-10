@@ -15,4 +15,4 @@ def parse_syntax(tokens, grammar):
     parse_node(parser, "root", super_root)
 
     # return root
-    return super_root
+    return super_root.children[0]

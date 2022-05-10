@@ -1,4 +1,4 @@
-from parser.productions import Terminal, Concatenation, OptionalConcatenation, Optional, Alternative
+from parser.productions import Terminal, Concatenation, OptionalConcatenation, Alternative
 
 class Node:
     def __init__(self, name=None, children=None):
@@ -27,7 +27,6 @@ def parse_node(parser, production, parent_node, name=None):
     handler_dict = {
         Terminal: parse_terminal,
         Concatenation: parse_concatenation,
-        Optional: parse_optional,
         OptionalConcatenation: parse_optional_concatenation,
         Alternative: parse_alternative
     }
@@ -106,20 +105,3 @@ def parse_alternative(parser, alternative, parent_node, name):
     parse_node(parser, alternative.elements[1], alternative_node)
 
     parent_node.add_child(alternative_node)
-
-def parse_optional(parser, optional, parent_node, name):
-    optional_node = Node(name or "unnamed optional")
-    initial_index = parser.index
-
-    # try to parse optional element, don't propagate failure
-    try:
-        parse_node(parser, optional.element, optional_node)
-
-        parent_node.add_child(optional_node)
-        return
-    except SyntaxError:
-        pass
-
-    # upon failure, restore initial index
-    parser.index = initial_index
-    parent_node.add_child(optional_node)

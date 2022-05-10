@@ -1,9 +1,4 @@
-class Token:
-    def __init__(self, type, value, position):
-        self.type = type
-        self.value = value
-        self.position = position
-        self.length = len(value)
+from parser.token import Token
 
 def get_char(input, i):
     return input[i] if i >= 0 and i < len(input) else None

@@ -1,3 +1,4 @@
+from parser.token import Token
 from parser.lexer_handlers import handle_new_token
 from parser.lexer_handlers import handle_string_literal
 from parser.lexer_handlers import handle_number_literal
@@ -42,5 +43,8 @@ def scan_and_evaluate(input):
             if not machine_state.rescan:
                 break
             machine_state.rescan = False
+
+    # add end of file token
+    output.append(Token("end_of_file", "", len(input)))
 
     return output
