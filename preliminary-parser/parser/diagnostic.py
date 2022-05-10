@@ -1,6 +1,8 @@
 import os
 import sys
 
+from parser.parser import Node
+
 def diagnose_lexer_errors(tokens, input, file_path):
     output = False
 
@@ -30,3 +32,13 @@ def print_diagnostic(input, file_path, index, length, error):
     print(input[line_start:line_end], file=sys.stderr)
     print("{}{}".format(error_start * " ", length * "^"), file=sys.stderr)
     print("{}{}".format(error_start * " ", error), file=sys.stderr)
+
+def print_tree(node, indent=0):
+    spaces = "    " * indent
+    print("{}Node {}:".format(spaces, node.name))
+
+    for item in node.children:
+        if isinstance(item, Node):
+            print_tree(item, indent + 1)
+        else:
+            print("{}Terminal token: {} {}".format("    " * (indent + 1), item.type, item.value))

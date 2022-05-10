@@ -14,5 +14,9 @@ def parse_syntax(tokens, grammar):
     super_root = Node("super_root")
     parse_node(parser, "root", super_root)
 
+    # check against unparsed tokens
+    if parser.index != len(parser.tokens):
+        raise SyntaxError("Unparsed tokens")
+
     # return root
     return super_root.children[0]

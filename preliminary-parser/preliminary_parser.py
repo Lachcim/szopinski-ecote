@@ -1,8 +1,9 @@
 import sys
 from parser.lexer import scan_and_evaluate
 from parser.diagnostic import diagnose_lexer_errors
-from parser.grammar import meta_grammar, generate_grammar
-from parser.parser import parse_syntax, Node
+from parser.parser import parse_syntax
+from parser.meta_language import meta_grammar
+from parser.grammar import generate_grammar
 
 # print usage information
 if len(sys.argv) < 3:
@@ -28,14 +29,5 @@ if diagnose_lexer_errors(grammar_tokens, grammar_file_raw, grammar_file_path):
 # parse grammar file using grammar definition metalanguage
 grammar_syntax_tree = parse_syntax(grammar_tokens, meta_grammar)
 
-def print_tree(node, indent=0):
-    spaces = "    " * indent
-    print("{}node {}:".format(spaces, node.name))
-
-    for item in node.children:
-        if isinstance(item, Node):
-            print_tree(item, indent + 1)
-        else:
-            print("{}    terminal token: {} {}".format(spaces, item.type, item.value))
-
-print_tree(grammar_syntax_tree)
+# generate grammar from grammar file
+grammar = generate_grammar(grammar_syntax_tree)

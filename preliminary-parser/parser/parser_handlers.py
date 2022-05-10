@@ -19,10 +19,10 @@ def parse_node(parser, production, parent_node, name=None):
     while isinstance(production, str):
         name = name or production
 
-        if name not in parser.grammar:
-            raise ReferenceError("Unresolved reference \"{}\"".format(name))
+        if production not in parser.grammar:
+            raise ReferenceError("Unresolved reference \"{}\"".format(production))
 
-        production = parser.grammar[name]
+        production = parser.grammar[production]
 
     handler_dict = {
         Terminal: parse_terminal,
