@@ -1,6 +1,7 @@
 import sys
 from parser.lexer import scan_and_evaluate
 from parser.diagnostic import diagnose_lexer_errors
+from parser.grammar import meta_grammar, generate_grammar
 
 # print usage information
 if len(sys.argv) < 3:
