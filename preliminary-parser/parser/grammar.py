@@ -3,8 +3,15 @@ from parser.productions import Terminal, Concatenation, OptionalConcatenation, A
 # define grammar for the grammar definition file
 meta_grammar = {
     "root": Alternative(
-        "definition",
+        "definitions",
         Terminal("end_of_file")
+    ),
+    "definitions": Concatenation(
+        "definition",
+        Alternative(
+            "definitions",
+            Terminal("end_of_file")
+        )
     ),
     "definition": Concatenation(
         Terminal("identifier"),
