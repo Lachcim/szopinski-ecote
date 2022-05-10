@@ -14,29 +14,34 @@ class Terminal:
 
         return True
 
+class Concatenation:
+    def __init__(self, element1, element2):
+        self.elements = [element1, element2]
+
 class Optional:
-    def __init__(self, value):
-        self.value = value
+    def __init__(self, element):
+        self.element = element
+
+class OptionalConcatenation:
+    def __init__(self, optional, mandatory):
+        self.elements = [optional, mandatory]
 
 class Alternative:
-    def __init__(self, *paths):
-        self.paths = paths
-
-class Concatenation:
     def __init__(self, *elements):
         self.elements = elements
 
 # define grammar for the grammar definition file
 meta_grammar = {
     "root": Concatenation(
-        Terminal("identifier"),
-        Terminal("auxillary", "="),
-        Concatenation(
-            "srut",
-            Terminal("identifier", "prut")
+        Terminal("identifier", "alpha"),
+        OptionalConcatenation(
+            OptionalConcatenation(
+                Terminal("identifier", "beta"),
+                Optional(Terminal("identifier", "gamma"))
+            ),
+            Terminal("identifier", "delta")
         )
-    ),
-    "srut": Terminal("identifier")
+    )
 }
 
 # generate grammar from the syntax tree of a grammar definition file

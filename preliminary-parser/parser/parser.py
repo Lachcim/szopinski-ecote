@@ -1,4 +1,4 @@
-from parser.grammar import Terminal, Optional, Alternative, Concatenation
+from parser.grammar import Terminal, Concatenation, OptionalConcatenation, Optional, Alternative
 
 class Node:
     def __init__(self, name=None, children=None):
@@ -44,11 +44,50 @@ def parse_terminal(parser, terminal, parent_node, name):
 def parse_concatenation(parser, concatenation, parent_node, name):
     concatenation_node = Node(name or "unnamed concatenation")
 
-    # parse each element in the concatenation
+    # parse both elements in the concatenation
     for element in concatenation.elements:
         parse_node(parser, element, concatenation_node)
 
     parent_node.add_child(concatenation_node)
+
+def parse_optional_concatenation(parser, optional_concat, parent_node, name):
+    optional_concat_node = Node(name or "unnamed optional concatenation")
+    initial_index = parser.index
+
+    # try to concatenate both elements
+    try:
+        for element in optional_concat.elements:
+            parse_node(parser, element, optional_concat_node)
+
+        parent_node.add_child(optional_concat_node)
+        return
+    except SyntaxError:
+        pass
+
+    # restore index and try without the optional element
+    optional_concat_node = Node(name or "unnamed optional concatenation")
+    parser.index = initial_index
+
+    parse_node(parser, optional_concat.elements[1], optional_concat_node)
+
+    parent_node.add_child(optional_concat_node)
+
+def parse_optional(parser, optional, parent_node, name):
+    optional_node = Node(name or "unnamed optional")
+    initial_index = parser.index
+
+    # try to parse optional element, don't propagate failure
+    try:
+        parse_node(parser, optional.element, optional_node)
+
+        parent_node.add_child(optional_node)
+        return
+    except SyntaxError:
+        pass
+
+    # upon failure, restore initial index
+    parser.index = initial_index
+    parent_node.add_child(optional_node)
 
 def parse_node(parser, production, parent_node, name=None):
     # resolve references to named productions
@@ -62,9 +101,10 @@ def parse_node(parser, production, parent_node, name=None):
 
     handler_dict = {
         Terminal: parse_terminal,
-        Optional: None,
+        Concatenation: parse_concatenation,
+        Optional: parse_optional,
+        OptionalConcatenation: parse_optional_concatenation,
         Alternative: None,
-        Concatenation: parse_concatenation
     }
 
     handler_dict[type(production)](parser, production, parent_node, name)
