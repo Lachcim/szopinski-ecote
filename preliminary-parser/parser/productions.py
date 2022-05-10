@@ -27,5 +27,5 @@ class OptionalConcatenation:
         self.elements = [optional, mandatory]
 
 class Alternative:
-    def __init__(self, *elements):
-        self.elements = elements
+    def __init__(self, element1, element2):
+        self.elements = [element1, element2]

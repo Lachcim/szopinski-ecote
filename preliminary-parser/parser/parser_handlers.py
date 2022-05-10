@@ -29,7 +29,7 @@ def parse_node(parser, production, parent_node, name=None):
         Concatenation: parse_concatenation,
         Optional: parse_optional,
         OptionalConcatenation: parse_optional_concatenation,
-        Alternative: None,
+        Alternative: parse_alternative
     }
 
     handler_dict[type(production)](parser, production, parent_node, name)
@@ -85,6 +85,27 @@ def parse_optional_concatenation(parser, optional_concat, parent_node, name):
     parse_node(parser, optional_concat.elements[1], optional_concat_node)
 
     parent_node.add_child(optional_concat_node)
+
+def parse_alternative(parser, alternative, parent_node, name):
+    alternative_node = Node(name or "unnamed alternative")
+    initial_index = parser.index
+
+    # try to parse first option
+    try:
+        parse_node(parser, alternative.elements[0], alternative_node)
+
+        parent_node.add_child(alternative_node)
+        return
+    except SyntaxError:
+        pass
+
+    # restore index and try to parse second option
+    alternative_node = Node(name or "unnamed alternative")
+    parser.index = initial_index
+
+    parse_node(parser, alternative.elements[1], alternative_node)
+
+    parent_node.add_child(alternative_node)
 
 def parse_optional(parser, optional, parent_node, name):
     optional_node = Node(name or "unnamed optional")

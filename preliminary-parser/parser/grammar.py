@@ -4,12 +4,9 @@ from parser.productions import Terminal, Concatenation, OptionalConcatenation, O
 meta_grammar = {
     "root": Concatenation(
         Terminal("identifier", "alpha"),
-        OptionalConcatenation(
-            OptionalConcatenation(
-                Terminal("identifier", "beta"),
-                Optional(Terminal("identifier", "gamma"))
-            ),
-            Terminal("identifier", "delta")
+        Alternative(
+            Terminal("identifier", "sralfa"),
+            Terminal("identifier", "dupalfa")
         )
     )
 }
