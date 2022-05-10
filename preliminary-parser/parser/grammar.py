@@ -3,61 +3,40 @@ class Terminal:
         self.token_type = token_type
         self.token_value = token_value
 
+    def matches_token(self, token):
+        # compare token types
+        if self.token_type != token.type:
+            return False
+
+        # compare token values, no token value = wildcard
+        if self.token_value is not None and self.token_value != token.value:
+            return False
+
+        return True
+
 class Optional:
     def __init__(self, value):
         self.value = value
 
 class Alternative:
-    def __init__(self, *values):
-        self.values = values
+    def __init__(self, *paths):
+        self.paths = paths
 
 class Concatenation:
-    def __init__(self, *values):
-        self.values = values
+    def __init__(self, *elements):
+        self.elements = elements
 
 # define grammar for the grammar definition file
 meta_grammar = {
-    "root": Optional("definitions"),
-    "definitions": Concatenation("definition", Optional("definitions")),
-    "definition": Concatenation(
+    "root": Concatenation(
         Terminal("identifier"),
         Terminal("auxillary", "="),
-        "expression",
-        Terminal("auxillary", ";")
-    ),
-    "expression": Concatenation(
-        Alternative(
-            Terminal("identifier"),
-            Terminal("string_literal"),
-            Terminal("identifier", "identifier"),
-            Terminal("identifier", "string_literal"),
-            Terminal("identifier", "number_literal"),
-            "operator"
-        ),
-        Optional("expression")
-    ),
-    "operator": Alternative("optional_operator", "alternative_operator"),
-    "optional_operator": Concatenation(
-        Terminal("identifier", "optional"),
-        Terminal("auxillary", "("),
-        "expression",
-        Terminal("auxillary", ")"),
-    ),
-    "alternative_operator": Concatenation(
-        Terminal("identifier", "alternative"),
-        Terminal("auxillary", "("),
-        "argument_list",
-        Terminal("auxillary", ")"),
-    ),
-    "argument_list": Concatenation(
-        "expression",
-        Optional(
-            Concatenation(
-                Terminal("auxillary", ","),
-                "argument_list"
-            )
+        Concatenation(
+            "srut",
+            Terminal("identifier", "prut")
         )
-    )
+    ),
+    "srut": Terminal("identifier")
 }
 
 # generate grammar from the syntax tree of a grammar definition file
