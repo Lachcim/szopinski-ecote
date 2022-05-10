@@ -13,8 +13,10 @@ input_file_path = sys.argv[2]
 
 with open(grammar_file_path, "r") as f:
     grammar_file_raw = f.read()
+    grammar_file_raw = grammar_file_raw.replace("\t", "    ")
 with open(input_file_path, "r") as f:
-    input_file_raw = f.read()
+    input_file_raw = f.read().replace("\t", "    ")
+    input_file_raw = input_file_raw.replace("\t", "    ")
 
 # tokenize grammar file
 grammar_tokens = scan_and_evaluate(grammar_file_raw)
