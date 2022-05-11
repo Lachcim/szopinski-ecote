@@ -401,4 +401,26 @@
 	function, semantic rules are validated: the grammar must define a root
 	and it mustn't use reserved identifiers as keys.
 
+	\section{Test cases}
+
+	The most important test case validates backtracking. Given the following
+	production:
+
+	\begin{verbatim}root = concat(
+    "alpha",
+    opt_concat(
+        identifier,
+        "beta"
+    )
+)
+\end{verbatim}
+
+	It must be able to recognize the string \texttt{alpha beta}. A naive greedy
+	algorithm would consume the token \texttt{beta} as the identifier rather
+	that the token \texttt{"beta"}, leaving \texttt{opt\_concat} unable to
+	consume \texttt{beta} as its second child, thus failing the validation.
+
+	A more exhaustive test case would be to provide a grammar for JSON and
+	successfully validate a file against it.
+
 \end{document}
