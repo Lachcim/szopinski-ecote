@@ -234,4 +234,45 @@
 	additionally result in the addition of a node to a data structure mirroring
 	the history of chosen productions. Backtracking rules apply.
 
+	\subsection{Grammar generator}
+
+	Parsing the grammar description file against the meta-grammar yields a
+	syntax tree containing named and anonymous nodes corresponding to various
+	productions. The grammar generator searches this tree for definitions
+	and recursively parses them to build a dictionary of named productions
+	(a grammar description object) for the input file.
+
+	\section{Implementation}
+
+	\subsection{General architecture}
+
+	The program is divided into the entry point script and several modules,
+	each providing a separate layer of functionality.
+
+	\begin{center}
+	\begin{tabular}{ |c|p{8.5cm}| }
+		\hline
+			Module & Description \\
+		\hline
+			Entry point & Handles user interaction, file I/O and data flow between the main modules of the program. \\
+		\hline
+			Diagnostic & Contains functions for displaying data, visualizing data structures and printing diagnostic messages. \\
+		\hline
+			Lexer & Implements a finite-state machine to parse the raw input into tokens. \\
+		\hline
+			Lexer handlers & Defines the delta function of the finite-state machine. \\
+		\hline
+			Meta-language & Contains the hard-coded grammar description object for the meta-language. \\
+		\hline
+			Productions & Defines classes for compound and terminal productions. \\
+		\hline
+			Parser & Utilities for initializing a top-down recursive descent. \\
+		\hline
+			Parser handlers & Logical rules for parsing productions. \\
+		\hline
+			Grammar & Syntax tree analysis and grammar description object generation. \\
+		\hline
+	\end{tabular}
+	\end{center}
+
 \end{document}
