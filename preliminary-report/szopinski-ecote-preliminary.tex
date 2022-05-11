@@ -124,9 +124,9 @@
 		\end{enumerate}
 	\end{enumerate}
 
-	\subsubsection{Formal definition of the meta-language}
+	\subsubsection{Formal description of the meta-language}
 
-	The following is a formal definition of the above rules, written as a
+	The following is a formal description of the above rules, written as a
 	grammar description object using Python syntax:
 
 	\scriptsize\begin{verbatim}meta_grammar = {
@@ -196,5 +196,42 @@
     "expr_arg1": "expression",
     "expr_arg2": "expression"
 }\end{verbatim}
+
+	\normalsize There are two additional semantic constraints: (1) there must
+	be a definition named \texttt{root}, and (2) there mustn't be any
+	definitions whose names belong to the set of reserved identifiers.
+
+	\subsection{Top-down parser}
+
+	The parser is the core feature of the software. It takes the root production
+	of the given grammar and attempts to find a set of productions stemming from
+	the root which could accept all the tokens in the sequence. It does so by
+	implementing the logical rules of the three compound expressions discussed
+	earlier.
+
+	Each step of the parser is a recursive call to a function which processes
+	a single binary or terminal production. If it is determined that the set of
+	logical rules for that production can not yield a combination of productions to
+	parse the entire token sequence, the function generates an exception and returns
+	control to its caller.
+
+	Exceptions don't originate at compound productions, they are merely propagated
+	upwards by them. All exceptions stem from terminal productions at the leaves
+	of the production tree. A terminal symbol matches the current token in the
+	sequence against its signature and either increments the token iterator
+	(''accepts" the token), or raises an error to be handled by the logic of
+	compound productions higher in the syntax tree.
+
+	Backtracking is achieved by remembering the state of the token iterator at
+	the initialization of a compound production. If one path fails to parse
+	the token sequence, the iterator is reset and a different path is tried.
+	If neither path succeeds, the error from the later path is propagated
+	upwards, where backtracking may occur as well. If both paths are exhausted
+	at the root level, the token tree is declared unparseable.
+
+	The above algorithm merely checks the validity of the token sequence against
+	the grammar. To build a parse tree, each call to the parsing function may
+	additionally result in the addition of a node to a data structure mirroring
+	the history of chosen productions. Backtracking rules apply.
 
 \end{document}
