@@ -32,24 +32,14 @@ meta_grammar = {
             Alternative(
                 "alt_expression",
                 Alternative(
-                    Terminal("identifier"),
-                    Alternative(
-                        Terminal("string_literal"),
-                        Alternative(
-                            Terminal("identifier", "identifier"),
-                            Alternative(
-                                Terminal("identifier", "string_literal"),
-                                Alternative(
-                                    Terminal("identifier", "number_literal"),
-                                    Terminal("identifier", "end_of_file")
-                                )
-                            )
-                        )
-                    )
+                    "expr_identifier",
+                    "expr_string_literal"
                 )
             )
         )
     ),
+    "expr_identifier": Terminal("identifier"),
+    "expr_string_literal": Terminal("string_literal"),
     "concat_expression": Concatenation(
         Terminal("identifier", "concat"),
         "argument"
@@ -65,16 +55,16 @@ meta_grammar = {
     "argument": Concatenation(
         Terminal("auxillary", "("),
         Concatenation(
-            "arg1",
+            "expr_arg1",
             Concatenation(
                 Terminal("auxillary", ","),
                 Concatenation(
-                    "arg2",
+                    "expr_arg2",
                     Terminal("auxillary", ")")
                 )
             )
         )
     ),
-    "arg1": "expression",
-    "arg2": "expression"
+    "expr_arg1": "expression",
+    "expr_arg2": "expression"
 }

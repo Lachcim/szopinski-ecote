@@ -31,3 +31,4 @@ grammar_syntax_tree = parse_syntax(grammar_tokens, meta_grammar)
 
 # generate grammar from grammar file
 grammar = generate_grammar(grammar_syntax_tree)
+print(grammar["root"].elements)
