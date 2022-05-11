@@ -1,2 +1,18 @@
 __pycache__
 *.txt
+
+# Core latex/pdflatex auxiliary files:
+*.aux
+*.lof
+*.log
+*.lot
+*.fls
+*.out
+*.toc
+*.fmt
+*.fot
+*.cb
+*.cb2
+.*.lb
+
+szopinski-ecote-preliminary.pdf
