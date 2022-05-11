@@ -1,4 +1,4 @@
-from parser.token import Token
+from parser.lexer_handlers import Token
 from parser.lexer_handlers import handle_new_token
 from parser.lexer_handlers import handle_string_literal
 from parser.lexer_handlers import handle_number_literal
