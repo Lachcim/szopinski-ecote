@@ -275,4 +275,130 @@
 	\end{tabular}
 	\end{center}
 
+	\subsection{Data structures}
+
+	\subsubsection{Productions}
+
+	Four classes are defined to describe the three non-terminal and the single
+	terminal production types: \texttt{Concatenation},
+	\texttt{OptionalConcatenation}, \texttt{Alternative} and \texttt{Terminal}.
+
+	The non-terminal productions hold two slots for their children nodes. They
+	are separate because the parser function looks at the type of the production
+	to invoke the appropriate handler.
+
+	The terminal production holds a slot for the category and the value of the
+	token it matches against. Each may be null to disable verification for that
+	field. A method is provided for matching against tokens.
+
+	\subsubsection{Syntax node}
+
+	The \texttt{Node} class holds a single node of the syntax tree. It has a
+	name field for named productions and a children field. It may hold other
+	nodes, representing compound productions, or tokens, representing terminal
+	productions. Named terminal productions are wrapped in a single-child
+	\texttt{Node} object.
+
+	To facilitate backtracking, the class exposes methods for adding and
+	removing children without directly accessing the children field.
+
+	\subsubsection{State classes}
+
+	The classes \texttt{MachineState} and \texttt{ParserState} are data
+	aggregates representing the internal state of the lexer and the parser,
+	respectively.
+
+	The \texttt{MachineState} class contains an assortment of states necessary
+	to provide context for tokenization.
+
+	The \texttt{ParserState} class holds the token sequence and the grammar
+	that the parser is currently operating on, as well as the token iterator.
+
+	\subsection{Detailed implementation}
+
+	\subsubsection{Lexer}
+
+	The lexer is a finite-state machine. The lexing process begins by
+	initializing the state. The input file is then scanned character by character
+	to determine which characters constitute which tokens. On the boundary between
+	tokens and non-tokens (or neighboring tokens), the currently recognized token
+	is appended to the output sequence.
+
+	Once the entire input is parsed, an evaluation phase occurs, where transformations
+	are performed on the output sequence. Comments are removed and the end of
+	file token is appended.
+
+	\subsubsection{Parser}
+
+	The parser is initialized by creating a ``super-root" node and invoking
+	the parser function on the first token in the sequence.
+
+	The parser function accepts three arguments:
+	\begin{enumerate}
+		\item The current parser state, \texttt{ParserState}.
+		\item The prescribed production, either one of the four production types
+		or a string to be resolved from the grammar description object.
+		\item The parent node, where the parsed production is to be added as a
+		child node.
+	\end{enumerate}
+	The root element is parsed by specifying the prescribed production as
+	\texttt{"root"} and the parent node as the super-root. Upon exit, the
+	entry point function returns the first child of the super-root, i.e. the
+	root node.
+
+	If the production is specified as a string, the main parser function
+	performs name resolution to obtain the corresponding production class.
+	The specified production string then becomes the name for the node to be
+	appended to the parent node. Named productions aid in syntax tree analysis.
+
+	Once the production class is resolved, the main function looks up and
+	invokes the appropriate handler for that production.
+
+	\subsubsection{Terminal handler}
+
+	Terminal handlers accept input tokens and are the source of syntax errors,
+	crucial to the backtracking mechanism. The root node may be a terminal node,
+	in which case the language only accepts a single token.
+
+	The terminal handler resolves the token at the current index and compares
+	it against the production's signature. In case of category or value
+	mismatch, a syntax error is raised and propagated upwards in the call stack.
+
+	Upon success, the token iterator is incremented and a token is added to the
+	parent node. If the terminal production is a named production, the token
+	is wrapped in a single-child named node first.
+
+	\subsubsection{Non-terminal handlers}
+
+	The concatenation handler parses its two children in sequence. If any of
+	them fails, the error is propagated. No backtracking occurs in this handler.
+
+	The optional concatenation handler tries two paths: one where the first
+	child is skipped and one where it is not. If both paths fail, the error
+	from the second child is propagated.
+
+	Backtracking is implemented by saving the token iterator before attempting
+	the first path. If the first path fails, the iterator is restored and the
+	second path is attempted. A new node is created for each of the paths.
+	If a path succeeds, the corresponding node is appended to the parent.
+
+	The alternative handler is implemented in a similar way, the only difference
+	being the logical rules of the attempted paths.
+
+	\subsection{Grammar generator}
+
+	The grammar generator traverses the syntax tree of the parsed grammar file
+	in search of all named nodes corresponding to definitions.
+
+	For each definition, it searches nearby descendant nodes for the definition
+	key and expression. The expression is evaluated recursively until all
+	terminal productions are found. Found compound productions are translated
+	into their production classes. String literals are translated into tokens
+	with the given value. Identifiers are translated into tokens of the given
+	category or into references to other definitions.
+
+	When definitions are evaluated and prior to exit from the entry point
+	function, semantic rules are validated: the grammar must define a root
+	and it mustn't use reserved identifiers as keys.
+
 \end{document}
