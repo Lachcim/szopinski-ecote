@@ -1,4 +1,4 @@
-from parser.productions import Terminal, Concatenation, OptionalConcatenation, Alternative
+from parser.productions import Terminal, Concatenation, Optional, Alternative
 
 class Node:
     def __init__(self, name=None, children=None):
@@ -27,7 +27,7 @@ def parse_node(parser, production, parent_node, name=None):
     handler_dict = {
         Terminal: parse_terminal,
         Concatenation: parse_concatenation,
-        OptionalConcatenation: parse_optional_concatenation,
+        Optional: parse_optional,
         Alternative: parse_alternative
     }
 
@@ -63,27 +63,22 @@ def parse_concatenation(parser, concatenation, parent_node, name):
 
     parent_node.add_child(concatenation_node)
 
-def parse_optional_concatenation(parser, optional_concat, parent_node, name):
-    optional_concat_node = Node(name or "unnamed optional concatenation")
+def parse_optional(parser, optional, parent_node, name):
+    optional_node = Node(name or "unnamed optional")
     initial_index = parser.index
 
-    # try to concatenate both elements
+    # try to consume optional element
     try:
-        for element in optional_concat.elements:
-            parse_node(parser, element, optional_concat_node)
+        parse_node(parser, optional.element, optional_node)
 
-        parent_node.add_child(optional_concat_node)
+        parent_node.add_child(optional_node)
         return
     except SyntaxError:
         pass
 
-    # restore index and try without the optional element
-    optional_concat_node = Node(name or "unnamed optional concatenation")
+    # restore index and append empty node
     parser.index = initial_index
-
-    parse_node(parser, optional_concat.elements[1], optional_concat_node)
-
-    parent_node.add_child(optional_concat_node)
+    parent_node.add_child(Node(name or "unnamed optional"))
 
 def parse_alternative(parser, alternative, parent_node, name):
     alternative_node = Node(name or "unnamed alternative")

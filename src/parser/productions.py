@@ -18,9 +18,9 @@ class Concatenation:
     def __init__(self, element1, element2):
         self.elements = [element1, element2]
 
-class OptionalConcatenation:
-    def __init__(self, optional, mandatory):
-        self.elements = [optional, mandatory]
+class Optional:
+    def __init__(self, element):
+        self.element = element
 
 class Alternative:
     def __init__(self, element1, element2):

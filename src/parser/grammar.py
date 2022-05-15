@@ -1,6 +1,6 @@
 from parser.parser_handlers import Node
 from parser.meta_language import meta_grammar
-from parser.productions import Terminal, Concatenation, OptionalConcatenation, Alternative
+from parser.productions import Terminal, Concatenation, Optional, Alternative
 
 argumented_productions = [
     "concat_expression",
@@ -73,7 +73,7 @@ def parse_production(node):
     # resolve production class
     argumented_prod_classes = {
         "concat_expression": Concatenation,
-        "opt_concat_expression": OptionalConcatenation,
+        "opt_concat_expression": Optional,
         "alt_expression": Alternative
     }
     base_production = argumented_prod_classes[base_prod_name]
