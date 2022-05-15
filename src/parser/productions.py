@@ -5,10 +5,10 @@ class Terminal:
 
     def matches_token(self, token):
         # compare token types
-        if self.token_type != token.type:
+        if self.token_type is not None and self.token_type != token.type:
             return False
 
-        # compare token values, no token value = wildcard
+        # compare token values
         if self.token_value is not None and self.token_value != token.value:
             return False
 
