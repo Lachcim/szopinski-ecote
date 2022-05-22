@@ -33,6 +33,12 @@ def print_parser_error(error, input, file_path):
         error
     )
 
+def print_semantic_error(error, file_path):
+    file_name = os.path.basename(file_path)
+
+    print("Error in {}:".format(file_name), file=sys.stderr)
+    print(error, file=sys.stderr)
+
 def print_diagnostic(input, file_path, index, length, error):
     # print line containing error together with error message
     line_start = input.rfind("\n", 0, index) + 1

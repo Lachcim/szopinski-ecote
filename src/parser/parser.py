@@ -23,6 +23,18 @@ class Node:
 
         self.children = []
 
+    def resolve_child(self, *indices):
+        indices = list(indices)
+        index = indices.pop(0)
+
+        try:
+            if len(indices) == 0:
+                return self.children[index]
+
+            return self.children[index].resolve_child(*indices)
+        except IndexError:
+            return None
+
 class ParseError(Exception):
     def __init__(self, message, origin):
         super().__init__(message)
@@ -58,9 +70,6 @@ class Parser:
 
         # resolve production by name
         while isinstance(production, str):
-            if production not in self.grammar:
-                raise ReferenceError("Unresolved reference \"{}\"".format(production))
-
             production = self.grammar[production]
 
         # return empty node
