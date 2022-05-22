@@ -2,7 +2,8 @@ from parser.lexer_handlers import handle_new_token
 from parser.lexer_handlers import handle_string_literal
 from parser.lexer_handlers import handle_number_literal
 from parser.lexer_handlers import handle_identifier
-from parser.lexer_handlers import handle_auxillary
+from parser.lexer_handlers import handle_operator
+from parser.lexer_handlers import handle_separator
 from parser.lexer_handlers import handle_invalid
 
 class MachineState:
@@ -23,7 +24,8 @@ def scan_and_evaluate(input):
         "string_literal": handle_string_literal,
         "number_literal": handle_number_literal,
         "identifier": handle_identifier,
-        "auxillary": handle_auxillary,
+        "operator": handle_operator,
+        "separator": handle_separator,
         "invalid": handle_invalid
     }
 

@@ -1,6 +1,6 @@
 import sys
 from parser.lexer import scan_and_evaluate
-from parser.diagnostic import diagnose_lexer_errors, print_tree
+from parser.diagnostic import has_lexer_errors, print_lexer_errors, print_tree
 from parser.parser import Parser
 from parser.meta_language import meta_grammar
 
@@ -22,7 +22,9 @@ with open(input_file_path, "r") as f:
 
 # tokenize grammar file
 grammar_tokens = scan_and_evaluate(grammar_file_raw)
-if diagnose_lexer_errors(grammar_tokens, grammar_file_raw, grammar_file_path):
+
+if has_lexer_errors(grammar_tokens):
+    print_lexer_errors(grammar_tokens, grammar_file_raw, grammar_file_path)
     exit(1)
 
 # parse grammar file using grammar definition metalanguage

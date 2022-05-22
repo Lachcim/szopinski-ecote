@@ -10,10 +10,10 @@ meta_grammar = {
     "definition": Concatenation(
         "definition_key",
         Concatenation(
-            Terminal("auxillary", "="),
+            Terminal("operator", "="),
             Concatenation(
                 "definition_value",
-                Terminal("auxillary", ";")
+                Terminal("separator", ";")
             )
         )
     ),
@@ -55,21 +55,21 @@ meta_grammar = {
         "double_arg"
     ),
     "single_arg": Concatenation(
-        Terminal("auxillary", "("),
+        Terminal("separator", "("),
         Concatenation(
             "arg1",
-            Terminal("auxillary", ")"),
+            Terminal("separator", ")"),
         )
     ),
     "double_arg": Concatenation(
-        Terminal("auxillary", "("),
+        Terminal("separator", "("),
         Concatenation(
             "arg1",
             Concatenation(
-                Terminal("auxillary", ","),
+                Terminal("separator", ","),
                 Concatenation(
                     "arg2",
-                    Terminal("auxillary", ")")
+                    Terminal("separator", ")")
                 )
             )
         )

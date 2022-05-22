@@ -3,10 +3,15 @@ import sys
 
 from parser.parser import Node
 
-def diagnose_lexer_errors(tokens, input, file_path):
-    output = False
-
+def has_lexer_errors(tokens):
     # check if tokenized input contains invalid tokens
+    for token in tokens:
+        if token.type == "invalid":
+            return True
+
+    return False
+
+def print_lexer_errors(tokens, input, file_path):
     for token in tokens:
         if token.type == "invalid":
             print_diagnostic(
@@ -16,9 +21,6 @@ def diagnose_lexer_errors(tokens, input, file_path):
                 token.length,
                 "Invalid token"
             )
-            output = True
-
-    return output
 
 def print_diagnostic(input, file_path, index, length, error):
     line_start = input.rfind("\n", 0, index) + 1

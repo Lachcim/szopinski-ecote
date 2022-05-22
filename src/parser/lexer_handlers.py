@@ -1,9 +1,17 @@
+import string
+
 class Token:
     def __init__(self, type, value, position):
         self.type = type
         self.value = value
         self.position = position
         self.length = len(value)
+
+identifier_start = string.ascii_letters + "_"
+identifier_cont = identifier_start + string.digits
+separator_chars = "(),;[]{}"
+operator_chars = "!#$%&*+-./:<=>?@\\^`|~"
+string_delimiters = "\"'"
 
 def get_char(input, i):
     return input[i] if i >= 0 and i < len(input) else None
@@ -16,7 +24,7 @@ def handle_new_token(machine_state, i, input, output):
         return
 
     # whitespace separates tokens
-    if char in " \t\r\n\v\f":
+    if char in string.whitespace:
         machine_state.token_type = None
         return
 
@@ -24,14 +32,16 @@ def handle_new_token(machine_state, i, input, output):
     machine_state.token_start = i
 
     # identify token type
-    if char in "\"'":
+    if char in string_delimiters:
         machine_state.token_type = "string_literal"
-    elif char in "0123456789":
+    elif char in string.digits:
         machine_state.token_type = "number_literal"
-    elif (char.lower() >= "a" and char.lower() <= "z") or char == "_":
+    elif char in identifier_start:
         machine_state.token_type = "identifier"
-    else:
-        machine_state.token_type = "auxillary"
+    elif char in separator_chars:
+        machine_state.token_type = "separator"
+    elif char in operator_chars:
+        machine_state.token_type = "operator"
 
 def handle_string_literal(machine_state, i, input, output):
     char = get_char(input, i)
@@ -64,29 +74,30 @@ def handle_string_literal(machine_state, i, input, output):
 def handle_number_literal(machine_state, i, input, output):
     char = get_char(input, i)
 
-    # digits always allowed
-    if char in "0123456789":
-        return
+    if char is not None:
+        # digits always allowed
+        if char in string.digits:
+            return
 
-    # allow single decimal point
-    if char == ".":
-        if not machine_state.decimal_point_consumed:
-            machine_state.decimal_point_consumed = True
-        else:
-            # dot belongs to auxillary token and marks the end of this literal
-            lexeme = input[machine_state.token_start:i]
-            output.append(Token("number_literal", lexeme, machine_state.token_start))
+        # allow single decimal point
+        if char == ".":
+            if not machine_state.decimal_point_consumed:
+                machine_state.decimal_point_consumed = True
+            else:
+                # dot belongs to operator and marks the end of this literal
+                lexeme = input[machine_state.token_start:i]
+                output.append(Token("number_literal", lexeme, machine_state.token_start))
 
-            machine_state.token_start = i
-            machine_state.token_type = "auxillary"
+                machine_state.token_start = i
+                machine_state.token_type = "operator"
 
-        return
+            return
 
-    # must be separated from succeeding identifier
-    if (char.lower() >= "a" and char.lower() <= "z") or char == "_":
-        machine_state.decimal_point_consumed = False
-        machine_state.token_type = "invalid"
-        return
+        # must be separated from succeeding identifier
+        if char in identifier_cont:
+            machine_state.decimal_point_consumed = False
+            machine_state.token_type = "invalid"
+            return
 
     # non-digit, non-dot, non-identifier terminates the literal
     lexeme = input[machine_state.token_start:i]
@@ -100,40 +111,37 @@ def handle_identifier(machine_state, i, input, output):
     char = get_char(input, i)
 
     # non-alphanumeric, non-underscore terminates the identifier
-    if (char.lower() < "a" or char.lower() > "z") and char not in "0123456789_":
+    if char is None or char not in identifier_cont:
         lexeme = input[machine_state.token_start:i]
         output.append(Token("identifier", lexeme, machine_state.token_start))
 
         machine_state.token_type = None
         machine_state.rescan = True
 
-def handle_auxillary(machine_state, i, input, output):
+def handle_separator(machine_state, i, input, output):
+    # separators only take a single character
+    lexeme = input[machine_state.token_start:i]
+    output.append(Token("separator", lexeme, machine_state.token_start))
+
+    machine_state.token_type = None
+    machine_state.rescan = True
+
+def handle_operator(machine_state, i, input, output):
     char = get_char(input, i)
 
-    # transition into number literal
-    if char in "0123456789" and get_char(input, i - 1) in ["+", "-", "."]:
-        # output true auxillary part
-        if i - machine_state.token_start > 1:
-            lexeme = input[machine_state.token_start:(i - 1)]
-            output.append(Token("auxillary", lexeme, machine_state.token_start))
-
-        machine_state.token_start = i - 1
-        machine_state.token_type = "number_literal"
-        return
-
-    # terminate on identifier, number, string or whitespace
-    if (char.lower() >= "a" and char.lower() <= "z") or char in "_0123456789\"' \t\r\n\v\f":
+    # non-alphanumeric, non-underscore terminates the identifier
+    if char is None or char not in operator_chars:
         lexeme = input[machine_state.token_start:i]
-        output.append(Token("auxillary", lexeme, machine_state.token_start))
+        output.append(Token("operator", lexeme, machine_state.token_start))
 
         machine_state.token_type = None
-        machine_state.rescan = char not in " \t\r\n\v\f"
+        machine_state.rescan = True
 
 def handle_invalid(machine_state, i, input, output):
     char = get_char(input, i)
 
     # invalid tokens terminate on whitespace or EOF
-    if char is None or char in " \t\r\n\v\f":
+    if char is None or char in string.whitespace:
         lexeme = input[machine_state.token_start:i]
         output.append(Token("invalid", lexeme, machine_state.token_start))
         machine_state.token_type = None
