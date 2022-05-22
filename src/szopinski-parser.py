@@ -1,9 +1,8 @@
 import sys
 from parser.lexer import scan_and_evaluate
-from parser.diagnostic import diagnose_lexer_errors
-from parser.parser import parse_syntax
+from parser.diagnostic import diagnose_lexer_errors, print_tree
+from parser.parser import Parser
 from parser.meta_language import meta_grammar
-from parser.grammar import generate_grammar
 
 # print usage information
 if len(sys.argv) < 3:
@@ -27,8 +26,7 @@ if diagnose_lexer_errors(grammar_tokens, grammar_file_raw, grammar_file_path):
     exit(1)
 
 # parse grammar file using grammar definition metalanguage
-grammar_syntax_tree = parse_syntax(grammar_tokens, meta_grammar)
+grammar_parser = Parser(grammar_tokens, meta_grammar)
+grammar_parser.parse()
 
-# generate grammar from grammar file
-grammar = generate_grammar(grammar_syntax_tree)
-print(grammar["root"].elements)
+print_tree(grammar_parser.super_root)

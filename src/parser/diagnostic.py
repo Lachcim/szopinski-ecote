@@ -35,7 +35,12 @@ def print_diagnostic(input, file_path, index, length, error):
 
 def print_tree(node, indent=0):
     spaces = "    " * indent
-    print("{}Node {}:".format(spaces, node.name))
+    production_name = type(node.production).__name__
+
+    if node.name is not None:
+        print("{}{} ({}):".format(spaces, node.name, production_name))
+    else:
+        print("{}Unnamed {}:".format(spaces, production_name))
 
     for item in node.children:
         if isinstance(item, Node):
