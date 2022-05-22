@@ -2,7 +2,10 @@ from parser.productions import Terminal, Concatenation, Optional, Alternative
 
 # define grammar for the grammar definition file
 meta_grammar = {
-    "root": Optional("definitions"),
+    "root": Concatenation(
+        "definition",
+        Optional("definitions"),
+    ),
     "definitions": Concatenation(
         "definition",
         Optional("definitions")

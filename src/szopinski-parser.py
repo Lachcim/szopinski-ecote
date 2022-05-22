@@ -1,7 +1,8 @@
 import sys
 from parser.lexer import scan_and_evaluate
-from parser.diagnostic import has_lexer_errors, print_lexer_errors, print_tree
-from parser.parser import Parser
+from parser.diagnostic import has_lexer_errors, print_lexer_errors
+from parser.diagnostic import print_parser_error, print_tree
+from parser.parser import Parser, ParseError
 from parser.meta_language import meta_grammar
 
 # print usage information
@@ -27,8 +28,12 @@ if has_lexer_errors(grammar_tokens):
     print_lexer_errors(grammar_tokens, grammar_file_raw, grammar_file_path)
     exit(1)
 
-# parse grammar file using grammar definition metalanguage
-grammar_parser = Parser(grammar_tokens, meta_grammar)
-grammar_parser.parse()
+try:
+    # parse grammar file using grammar definition metalanguage
+    grammar_parser = Parser(grammar_tokens, meta_grammar)
+    grammar_parser.parse()
+except ParseError as e:
+    print_parser_error(e, grammar_file_raw, grammar_file_path)
+    exit(1)
 
 print_tree(grammar_parser.super_root)

@@ -27,8 +27,8 @@ class Terminal(Production):
         # check for end of input
         if parser.index == len(parser.tokens):
             if parser.error is None:
-                parser.error = "Unexpected end of input"
-                parser.error_origin = parser.tokens[-1]
+                parser.error = "Unexpected end of input, expected {}".format(self.token_value or self.token_type)
+                parser.error_origin = parser.tokens[-1] if len(parser.tokens) > 0 else None
 
             # invoke backtrack
             raise SyntaxError
@@ -139,8 +139,9 @@ class SuperRoot(Production):
 
         # if returning from root, check if all tokens have been parsed
         if parser.index < len(parser.tokens):
-            parser.error = "Unparsed tokens"
-            parser.error_origin = parser.tokens[parser.index]
+            if parser.error is None:
+                parser.error = "Unexpected token, expected end of file"
+                parser.error_origin = parser.tokens[parser.index]
 
             # invoke backtrack
             raise SyntaxError

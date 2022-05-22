@@ -12,6 +12,7 @@ def has_lexer_errors(tokens):
     return False
 
 def print_lexer_errors(tokens, input, file_path):
+    # print diagnostic for each invalid token
     for token in tokens:
         if token.type == "invalid":
             print_diagnostic(
@@ -22,7 +23,18 @@ def print_lexer_errors(tokens, input, file_path):
                 "Invalid token"
             )
 
+def print_parser_error(error, input, file_path):
+    # print diagnostic for parser error
+    print_diagnostic(
+        input,
+        file_path,
+        error.origin.position if error.origin is not None else 0,
+        error.origin.length if error.origin is not None else 1,
+        error
+    )
+
 def print_diagnostic(input, file_path, index, length, error):
+    # print line containing error together with error message
     line_start = input.rfind("\n", 0, index) + 1
     line_end = input.find("\n", line_start)
     line_end = line_end if line_end != -1 else len(input)

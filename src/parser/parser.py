@@ -23,6 +23,11 @@ class Node:
 
         self.children = []
 
+class ParseError(Exception):
+    def __init__(self, message, origin):
+        super().__init__(message)
+        self.origin = origin
+
 class Parser:
     def __init__(self, tokens, grammar):
         # register token sequence and grammar for this parser
@@ -73,7 +78,7 @@ class Parser:
         except SyntaxError:
             # nowhere to backtrack to
             if len(self.branch_points) == 0:
-                raise SyntaxError(self.error) from None
+                raise ParseError(self.error, self.error_origin)
 
             # backtrack on error
             self.active_node = self.branch_points[-1]
