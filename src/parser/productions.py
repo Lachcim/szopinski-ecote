@@ -50,10 +50,9 @@ class Terminal(Production):
         # update parser and node state
         parser.index += 1
         node.add_child(token)
-        node.stage += 1
 
         # return to parent node
-        parser.active_node = node.parent
+        return node.parent
 
 class Concatenation(Production):
     def __init__(self, element1, element2):
@@ -61,41 +60,82 @@ class Concatenation(Production):
 
     def advance(self, node, parser):
         # return to parent if returning from right child
-        if node.stage == 2:
-            parser.active_node = node.parent
-            return
+        if len(node.children) == 2 and parser.previous_node is node.children[1]:
+            return node.parent
 
-        # create node for left or right child, depending on stage
-        child_production = self.elements[node.stage]
+        # create node for left or right child and queue for parsing
+        child_index = 0 if parser.previous_node is node.parent else 1
+        child_production = self.elements[child_index]
         child = parser.create_node(child_production)
-        node.add_child(child)
 
-        # queue child for parsing
-        parser.active_node = child
-        node.stage += 1
+        node.add_child(child, child_index)
+        return child
 
 class Optional(Production):
     def __init__(self, element):
         super().__init__(element)
 
+    def advance(self, node, parser):
+        if parser.backtracking:
+            # if backtracking, restore initial state and unregister branch point
+            node.remove_children()
+            parser.index = node.initial_index
+            parser.branch_points.remove(node)
+            parser.backtracking = False
+
+        if parser.previous_node is node.parent:
+            # if entering for the first time, remember initial state and register branch point
+            node.initial_index = parser.index
+            parser.branch_points.append(node)
+
+            # create node for child and queue for parsing
+            child = parser.create_node(self.elements[0])
+            node.add_child(child)
+            return child
+
+        # if returning from child, return to parent
+        return node.parent
+
 class Alternative(Production):
     def __init__(self, element1, element2):
         super().__init__(element1, element2)
+
+    def advance(self, node, parser):
+        if parser.backtracking:
+            # if backtracking, restore initial state and unregister branch point
+            node.remove_children()
+            parser.index = node.initial_index
+            parser.branch_points.remove(node)
+            parser.backtracking = False
+
+            # create node for path B and queue for parsing
+            child_b = parser.create_node(self.elements[1])
+            node.add_child(child_b)
+            return child_b
+
+        if parser.previous_node is node.parent:
+            # if entering for the first time, remember initial state and register branch point
+            node.initial_index = parser.index
+            parser.branch_points.append(node)
+
+            # create node for path A and queue for parsing
+            child_a = parser.create_node(self.elements[0])
+            node.add_child(child_a)
+            return child_a
+
+        # if returning from child, return to parent
+        return node.parent
 
 class SuperRoot(Production):
     def __init__(self, element):
         super().__init__(element)
 
     def advance(self, node, parser):
-        # in initial stage, create root element
-        if node.stage == 0:
+        # when entering for the first time, create root element
+        if parser.previous_node is None:
             root_node = parser.create_node(self.elements[0])
             node.add_child(root_node)
-
-            # queue root for parsing
-            parser.active_node = root_node
-            node.stage += 1
-            return
+            return root_node
 
         # if returning from root, check if all tokens have been parsed
         if parser.index < len(parser.tokens):
@@ -104,6 +144,3 @@ class SuperRoot(Production):
 
             # invoke backtrack
             raise SyntaxError
-
-        # finish parsing
-        parser.active_node = None

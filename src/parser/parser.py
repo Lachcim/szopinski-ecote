@@ -6,12 +6,16 @@ class Node:
         self.production = None
         self.parent = None
         self.initial_index = None
-        self.stage = 0
         self.children = []
 
-    def add_child(self, child):
+    def add_child(self, child, index=None):
         child.parent = self
-        self.children.append(child)
+
+        if index is None or index == len(self.children):
+            self.children.append(child)
+        else:
+            self.children[index].parent = None
+            self.children[index] = child
 
     def remove_children(self):
         for child in self.children:
@@ -25,6 +29,7 @@ class Parser:
         self.tokens = tokens
         self.grammar = grammar
         self.active_node = None
+        self.previous_node = None
         self.index = 0
 
         # create super root
@@ -36,6 +41,7 @@ class Parser:
 
         # initialize node history for backtracking
         self.branch_points = []
+        self.backtracking = False
 
         # initialize error state
         self.error = None
@@ -61,14 +67,17 @@ class Parser:
     def advance(self):
         try:
             # delegate advancement logic to Production subclass
-            self.active_node.production.advance(self.active_node, self)
+            previous_node = self.active_node
+            self.active_node = self.active_node.production.advance(self.active_node, self)
+            self.previous_node = previous_node
         except SyntaxError:
             # nowhere to backtrack to
             if len(self.branch_points) == 0:
                 raise SyntaxError(self.error) from None
 
             # backtrack on error
-            self.active_node = self.branch_points.pop()
+            self.active_node = self.branch_points[-1]
+            self.backtracking = True
 
     def parse(self):
         while self.active_node is not None:
