@@ -5,10 +5,7 @@ from parser.productions import Terminal, Concatenation, Optional, Alternative
 reserved_identifiers = set([
     "identifier",
     "string_literal",
-    "number_literal",
-    "opt",
-    "concat",
-    "alt"
+    "number_literal"
 ])
 
 def parse_expression(node, used_identifiers):
@@ -47,7 +44,6 @@ def parse_expression(node, used_identifiers):
 # generate grammar from the syntax tree of a grammar definition file
 def build_grammar(definitions):
     output = {}
-    defined_identifiers = set()
     used_identifiers = set()
 
     # find and parse all definitions in parsed grammar file
@@ -55,30 +51,31 @@ def build_grammar(definitions):
         definition_key = definitions.resolve_child(0, 0, 0).value
         definition_value = definitions.resolve_child(0, 1, 1, 0)
 
+        # validate definition key
+        if definition_key in reserved_identifiers:
+            raise NameError("Illegal production name {}".format(definition_key))
+
+        if definition_key in output:
+            raise NameError("Duplicate definition for {}".format(definition_key))
+
+        # obtain production from definition value
         output[definition_key] = parse_expression(definition_value, used_identifiers)
-        defined_identifiers.add(definition_key)
 
         # move to next definitions node, break if there are none
         definitions = definitions.resolve_child(1, 0)
 
     # require root definition
-    if "root" not in defined_identifiers:
-        raise NameError("Root element definition missing")
-
-    # disallow overwriting reserved identifiers
-    overwritten_reserved = used_identifiers.intersection(reserved_identifiers)
-    for identifier in overwritten_reserved:
-        raise NameError("Illegal production name {}".format(identifier))
+    if "root" not in output:
+        raise NameError("Root production is undefined")
 
     # disallow undefined references
-    undefined_references = used_identifiers.difference(defined_identifiers)
-    for identifier in undefined_references:
-        raise NameError("Reference to {} is undefined".format(identifier))
+    for key in used_identifiers:
+        if key not in output:
+            raise NameError("Reference to {} is undefined".format(key))
 
     # disallow unused definitions
-    defined_identifiers.remove("root")
-    unused_definitions = defined_identifiers.difference(used_identifiers)
-    for identifier in unused_definitions:
-        raise NameError("Production {} is defined but never used".format(identifier))
+    for key in output:
+        if key not in used_identifiers and key != "root":
+            raise NameError("Production {} is defined but never used".format(key))
 
     return output
