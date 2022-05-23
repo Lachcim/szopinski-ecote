@@ -94,7 +94,9 @@ class Parser:
             self.backtracking = True
 
     def parse(self):
+        # advance until exit from super root
         while self.active_node is not None:
             self.advance()
 
+        # return root
         return self.super_root.children[0]

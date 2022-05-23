@@ -53,17 +53,34 @@ def print_diagnostic(input, file_path, index, length, error):
     print("{}{}".format(error_start * " ", length * "^"), file=sys.stderr)
     print("{}{}".format(error_start * " ", error), file=sys.stderr)
 
-def print_tree(node, indent=0):
+def print_tree(node, active_node, indent=0, flatten=False, interactive=False):
     spaces = "    " * indent
     production_name = type(node.production).__name__
+    active_indicator = " <---" if node is active_node else ""
+
+    if indent == 0:
+        if flatten and active_node.name is None:
+            return
+        if interactive:
+            os.system("cls" if os.name == "nt" else "clear")
 
     if node.name is not None:
-        print("{}{} ({}):".format(spaces, node.name, production_name))
+        print("{}{} ({}):{}".format(spaces, node.name, production_name, active_indicator))
     else:
-        print("{}Unnamed {}:".format(spaces, production_name))
+        if not flatten:
+            print("{}Unnamed {}:{}".format(spaces, production_name, active_indicator))
+        else:
+            indent -= 1
 
     for item in node.children:
         if isinstance(item, Node):
-            print_tree(item, indent + 1)
+            print_tree(item, active_node, indent + 1, flatten=flatten)
         else:
-            print("{}Terminal token: {} {}".format("    " * (indent + 1), item.type, item.value))
+            print("{}Token: {} {}".format("    " * (indent + 1), item.type, item.value))
+
+    # pause execution in interactive mode, otherwise print newline after tree
+    if indent == 0:
+        if interactive:
+            input()
+        else:
+            print()
