@@ -59,17 +59,13 @@ if has_lexer_errors(input_tokens):
 
 # create parser using input tokens and the obtained grammar
 parser = Parser(input_tokens, grammar)
-print_tree(parser.super_root, parser.active_node, flatten=args.flatten, interactive=args.interactive)
+print_tree(parser.super_root, parser, flatten=args.flatten, interactive=args.interactive)
 
 # step until parser exits from super root
-while True:
+while parser.active_node is not None:
     try:
         parser.advance()
-
-        if parser.active_node is None:
-            break
-
-        print_tree(parser.super_root, parser.active_node, flatten=args.flatten, interactive=args.interactive)
+        print_tree(parser.super_root, parser, flatten=args.flatten, interactive=args.interactive)
     except ParseError as error:
         print_parser_error(error, input_file_raw, args.input_file)
         exit(5)

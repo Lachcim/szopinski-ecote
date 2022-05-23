@@ -1,7 +1,8 @@
 import os
 import sys
 
-from parser.parser import Node
+from parser.lexer_handlers import Token
+from parser.productions import Terminal
 
 def has_lexer_errors(tokens):
     # check if tokenized input contains invalid tokens
@@ -53,34 +54,68 @@ def print_diagnostic(input, file_path, index, length, error):
     print("{}{}".format(error_start * " ", length * "^"), file=sys.stderr)
     print("{}{}".format(error_start * " ", error), file=sys.stderr)
 
-def print_tree(node, active_node, indent=0, flatten=False, interactive=False):
-    spaces = "    " * indent
-    production_name = type(node.production).__name__
-    active_indicator = " <---" if node is active_node else ""
-
+def print_tree(node, parser, indent=0, flatten=False, interactive=False):
+    # top-level entry checks
     if indent == 0:
-        if flatten and active_node.name is None:
+        # in flatten mode, don't print if the active node is not going to be displayed
+        if flatten and parser.active_node and parser.active_node.name is None:
             return
+
+        # in interactive mode, clear the screen before printing
         if interactive:
             os.system("cls" if os.name == "nt" else "clear")
 
-    if node.name is not None:
-        print("{}{} ({}):{}".format(spaces, node.name, production_name, active_indicator))
+    indent_spaces = "    " * indent
+    active_indicator = " <---" if node is parser.active_node else ""
+
+    # for tokens, print their type and value
+    if isinstance(node, Token):
+        token_value = "\"{}\"".format(node.value) if node.type != "string_literal" else node.value
+        print("{}token {} ({})".format(indent_spaces, token_value, node.type))
+        return
+
+    # in flatten mode, skip this node if unnamed
+    if flatten and node.name is None:
+        for child in node.children:
+            print_tree(child, parser, indent, flatten)
+        return
+
+    # obtain a string describing the production
+    production_desc = type(node.production).__name__
+
+    # for terminal productions, specify consumption requirements
+    if isinstance(node.production, Terminal):
+        token_type = node.production.token_type
+        token_value = node.production.token_value
+
+        if token_type is not None and token_value is not None:
+            production_desc += " of type {} and value \"{}\"".format(token_type, token_value)
+        elif token_type is not None:
+            production_desc += " of type {}".format(token_type)
+        elif token_value is not None:
+            production_desc += " of value \"{}\"".format(token_value)
+        else:
+            production_desc += " of any type and value"
+
+    # obtain a string describing the node
+    if node.name is None:
+        node_desc = "unnamed {}".format(production_desc)
     else:
-        if not flatten:
-            print("{}Unnamed {}:{}".format(spaces, production_name, active_indicator))
-        else:
-            indent -= 1
+        node_desc = "{} ({})".format(node.name, production_desc)
 
-    for item in node.children:
-        if isinstance(item, Node):
-            print_tree(item, active_node, indent + 1, flatten=flatten)
-        else:
-            print("{}Token: {} {}".format("    " * (indent + 1), item.type, item.value))
+    # print node description
+    print("{}{}:{}".format(indent_spaces, node_desc, active_indicator))
 
-    # pause execution in interactive mode, otherwise print newline after tree
+    # print children
+    for child in node.children:
+        print_tree(child, parser, indent + 1, flatten)
+
+    # top-level exit checks
     if indent == 0:
+        # in interactive mode, prompt for input before continuing
         if interactive:
             input()
-        else:
-            print()
+            return
+
+        # otherwise, print an empty line to separate stages
+        print()
