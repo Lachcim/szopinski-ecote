@@ -1,4 +1,3 @@
-from parser.diagnostic import print_tree
 from parser.lexer_handlers import Token
 from parser.productions import Terminal, Concatenation, Optional, Alternative
 
