@@ -1,7 +1,7 @@
 root = concat(
-	"goodbye",
-	concat(
-		"cruel",
-		"world"
-	)
+    "goodbye",
+    concat(
+        "cruel",
+        "world"
+    )
 );

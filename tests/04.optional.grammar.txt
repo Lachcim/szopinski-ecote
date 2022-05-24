@@ -1,8 +1,8 @@
 root = concat(farewell, farewell);
 farewell = concat(
-	"goodbye",
-	concat(
-		opt("cruel"),
-		"world"
-	)
+    "goodbye",
+    concat(
+        opt("cruel"),
+        "world"
+    )
 );

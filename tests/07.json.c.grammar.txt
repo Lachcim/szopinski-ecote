@@ -1,59 +1,59 @@
 root = object_literal;
 object_literal = concat(
-	"{",
-	concat(
-		opt(object_members),
-		"}"
-	)
+    "{",
+    concat(
+        opt(object_members),
+        "}"
+    )
 );
 object_members = concat(
-	object_member,
-	opt(
-		concat(
-			",",
-			object_members
-		)
-	)
+    object_member,
+    opt(
+        concat(
+            ",",
+            object_members
+        )
+    )
 );
 object_member = concat(
-	string_literal,
-	concat(
-		":",
-		literal
-	)
+    string_literal,
+    concat(
+        ":",
+        literal
+    )
 );
 literal = alt(
-	alt(
-		object_literal,
-		array_literal
-	),
-	alt(
-		alt(
-			string_literal,
-			number_literal
-		),
-		alt(
-			"null",
-			alt(
-				"true",
-				"false"
-			)
-		)
-	)
+    alt(
+        object_literal,
+        array_literal
+    ),
+    alt(
+        alt(
+            string_literal,
+            number_literal
+        ),
+        alt(
+            "null",
+            alt(
+                "true",
+                "false"
+            )
+        )
+    )
 );
 array_literal = concat(
-	"[",
-	concat(
-		opt(array_members),
-		"]"
-	)
+    "[",
+    concat(
+        opt(array_members),
+        "]"
+    )
 );
 array_members = concat(
-	literal,
-	opt(
-		concat(
-			",",
-			array_members
-		)
-	)
+    literal,
+    opt(
+        concat(
+            ",",
+            array_members
+        )
+    )
 );

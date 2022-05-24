@@ -1,9 +1,9 @@
 {
-	"boolean1": true,
-	"boolean2": false,
-	"null": null,
-	"number": 0.123,
-	"string": "hello",
-	"array": ["hello", "world"],
-	"object": { "hello": "world" }
+    "boolean1": true,
+    "boolean2": false,
+    "null": null,
+    "number": 0.123,
+    "string": "hello",
+    "array": ["hello", "world"],
+    "object": { "hello": "world" }
 }
