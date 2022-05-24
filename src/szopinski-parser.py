@@ -1,4 +1,5 @@
 import argparse
+
 from parser.lexer import scan_and_evaluate
 from parser.diagnostic import has_lexer_errors, print_lexer_errors, print_tree
 from parser.diagnostic import print_parser_error, print_semantic_error
@@ -24,13 +25,21 @@ arg_parser.add_argument("-f", "--final",
 )
 args = arg_parser.parse_args()
 
-# read files
+# utility functions
 def read_file_contents(path):
     with open(path, "r") as f:
         file_contents = f.read()
         file_contents = file_contents.replace("\t", "    ")
         return file_contents
 
+def print_tree_step(parser, final_step=False):
+    if args.final and not final_step:
+        return
+    print_tree(parser.super_root, parser, collapse=args.collapse, interactive=args.interactive)
+    if not args.interactive and not final_step:
+        print()
+
+# read files
 grammar_file_raw = read_file_contents(args.grammar_file)
 input_file_raw = read_file_contents(args.input_file)
 
@@ -63,18 +72,13 @@ if has_lexer_errors(input_tokens):
 
 # create parser using input tokens and the obtained grammar
 parser = Parser(input_tokens, grammar)
-if not args.final:
-    print_tree(parser.super_root, parser, collapse=args.collapse, interactive=args.interactive)
+print_tree_step(parser)
 
 # step until parser exits from super root
 while parser.active_node is not None:
     try:
         parser.advance()
-        if not args.final:
-            print_tree(parser.super_root, parser, collapse=args.collapse, interactive=args.interactive)
+        print_tree_step(parser, final_step=parser.active_node is None)
     except ParseError as error:
         print_parser_error(error, input_file_raw, args.input_file)
         exit(5)
-
-if args.final:
-    print_tree(parser.super_root, parser, collapse=args.collapse, interactive=args.interactive)

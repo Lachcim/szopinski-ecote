@@ -110,12 +110,6 @@ def print_tree(node, parser, indent=0, collapse=False, interactive=False):
     for child in node.children:
         print_tree(child, parser, indent + 1, collapse)
 
-    # top-level exit checks
-    if indent == 0:
-        # in interactive mode, prompt for input before continuing
-        if interactive:
-            input()
-            return
-
-        # otherwise, print an empty line to separate stages
-        print()
+    # exit check: in interactive mode, prompt for input before continuing
+    if indent == 0 and interactive:
+        input()
