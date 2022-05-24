@@ -10,12 +10,16 @@ from parser.grammar_builder import build_grammar
 arg_parser = argparse.ArgumentParser(description="Parse a file using the given grammar.")
 arg_parser.add_argument("grammar_file", help="path to the file containing the grammar definition")
 arg_parser.add_argument("input_file", help="path to the file to be parsed")
-arg_parser.add_argument("-f", "--flatten",
-    help="don't print unnamed nodes",
+arg_parser.add_argument("-c", "--collapse",
+    help="collapse unnamed nodes",
     action="store_true"
 )
 arg_parser.add_argument("-i", "--interactive",
     help="clear screen and step through the tree manually",
+    action="store_true"
+)
+arg_parser.add_argument("-f", "--final",
+    help="only print the final state of the tree",
     action="store_true"
 )
 args = arg_parser.parse_args()
@@ -59,13 +63,18 @@ if has_lexer_errors(input_tokens):
 
 # create parser using input tokens and the obtained grammar
 parser = Parser(input_tokens, grammar)
-print_tree(parser.super_root, parser, flatten=args.flatten, interactive=args.interactive)
+if not args.final:
+    print_tree(parser.super_root, parser, collapse=args.collapse, interactive=args.interactive)
 
 # step until parser exits from super root
 while parser.active_node is not None:
     try:
         parser.advance()
-        print_tree(parser.super_root, parser, flatten=args.flatten, interactive=args.interactive)
+        if not args.final:
+            print_tree(parser.super_root, parser, collapse=args.collapse, interactive=args.interactive)
     except ParseError as error:
         print_parser_error(error, input_file_raw, args.input_file)
         exit(5)
+
+if args.final:
+    print_tree(parser.super_root, parser, collapse=args.collapse, interactive=args.interactive)

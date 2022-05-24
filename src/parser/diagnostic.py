@@ -54,11 +54,11 @@ def print_diagnostic(input, file_path, index, length, error):
     print("{}{}".format(error_start * " ", length * "^"), file=sys.stderr)
     print("{}{}".format(error_start * " ", error), file=sys.stderr)
 
-def print_tree(node, parser, indent=0, flatten=False, interactive=False):
+def print_tree(node, parser, indent=0, collapse=False, interactive=False):
     # top-level entry checks
     if indent == 0:
-        # in flatten mode, don't print if the active node is not going to be displayed
-        if flatten and parser.active_node and parser.active_node.name is None:
+        # in collapse mode, don't print if the active node is not going to be displayed
+        if collapse and parser.active_node and parser.active_node.name is None:
             return
 
         # in interactive mode, clear the screen before printing
@@ -74,10 +74,10 @@ def print_tree(node, parser, indent=0, flatten=False, interactive=False):
         print("{}token {} ({})".format(indent_spaces, token_value, node.type))
         return
 
-    # in flatten mode, skip this node if unnamed
-    if flatten and node.name is None:
+    # in collapse mode, skip this node if unnamed
+    if collapse and node.name is None:
         for child in node.children:
-            print_tree(child, parser, indent, flatten)
+            print_tree(child, parser, indent, collapse)
         return
 
     # obtain a string describing the production
@@ -108,7 +108,7 @@ def print_tree(node, parser, indent=0, flatten=False, interactive=False):
 
     # print children
     for child in node.children:
-        print_tree(child, parser, indent + 1, flatten)
+        print_tree(child, parser, indent + 1, collapse)
 
     # top-level exit checks
     if indent == 0:
