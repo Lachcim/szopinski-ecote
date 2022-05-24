@@ -1,0 +1,16 @@
+root = concat(
+	identifier,
+	concat(
+		";",
+		concat(
+			";",
+			concat(
+				"++",
+				concat(
+					number_literal,
+					string_literal
+				)
+			)
+		)
+	)
+);

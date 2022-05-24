@@ -1,0 +1,4 @@
+Error in 01.invalid_token.grammar.txt, line 1:
+this grammar contains "an unclosed string literal
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                      Invalid token

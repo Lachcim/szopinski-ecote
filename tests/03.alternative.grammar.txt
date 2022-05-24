@@ -1,0 +1,4 @@
+root = concat(
+	alt("hello", "hi"),
+	alt("world", "earth")
+);

@@ -1,6 +1,5 @@
 __pycache__
 *.pyc
-*.txt
 
 # Core latex/pdflatex auxiliary files:
 *.aux

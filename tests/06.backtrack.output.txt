@@ -1,0 +1,7 @@
+super root (SuperRoot):
+    root (Concatenation):
+        unnamed Alternative:
+            unnamed Terminal of value "alpha":
+                token "alpha" (identifier)
+        unnamed Terminal of value "beta":
+            token "beta" (identifier)

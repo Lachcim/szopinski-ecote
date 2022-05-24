@@ -1,0 +1,8 @@
+super root (SuperRoot):
+    root (Concatenation):
+        unnamed Alternative:
+            unnamed Terminal of value "hello":
+                token "hello" (identifier)
+        unnamed Alternative:
+            unnamed Terminal of value "earth":
+                token "earth" (identifier)

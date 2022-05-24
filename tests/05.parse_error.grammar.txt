@@ -1,0 +1,7 @@
+root = concat(
+	"goodbye",
+	concat(
+		"cruel",
+		"world"
+	)
+);

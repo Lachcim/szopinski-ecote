@@ -1,0 +1,4 @@
+Error in 05.parse_error.input.txt, line 1:
+goodbye world
+        ^^^^^
+        Unexpected token, expected cruel

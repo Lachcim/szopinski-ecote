@@ -1,0 +1,6 @@
+super root (SuperRoot):
+    root (Concatenation):
+        named_hello (Terminal of value "hello"):
+            token "hello" (identifier)
+        unnamed Terminal of value "world":
+            token "world" (identifier)

@@ -1,0 +1,7 @@
+root = concat(
+	alt(
+		concat("alpha", "beta"),
+		"alpha"
+	),
+	"beta"
+);

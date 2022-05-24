@@ -1,0 +1,18 @@
+super root (SuperRoot):
+    root (Concatenation):
+        farewell (Concatenation):
+            unnamed Terminal of value "goodbye":
+                token "goodbye" (identifier)
+            unnamed Concatenation:
+                unnamed Optional:
+                    unnamed Terminal of value "cruel":
+                        token "cruel" (identifier)
+                unnamed Terminal of value "world":
+                    token "world" (identifier)
+        farewell (Concatenation):
+            unnamed Terminal of value "goodbye":
+                token "goodbye" (identifier)
+            unnamed Concatenation:
+                unnamed Optional:
+                unnamed Terminal of value "world":
+                    token "world" (identifier)

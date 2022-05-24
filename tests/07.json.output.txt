@@ -1,0 +1,69 @@
+super root (SuperRoot):
+    root (Concatenation):
+        token "{" (separator)
+        object_members (Concatenation):
+            object_member (Concatenation):
+                token "boolean1" (string_literal)
+                token ":" (operator)
+                literal (Alternative):
+                    token "true" (identifier)
+            token "," (separator)
+            object_members (Concatenation):
+                object_member (Concatenation):
+                    token "boolean2" (string_literal)
+                    token ":" (operator)
+                    literal (Alternative):
+                        token "false" (identifier)
+                token "," (separator)
+                object_members (Concatenation):
+                    object_member (Concatenation):
+                        token "null" (string_literal)
+                        token ":" (operator)
+                        literal (Alternative):
+                            token "null" (identifier)
+                    token "," (separator)
+                    object_members (Concatenation):
+                        object_member (Concatenation):
+                            token "number" (string_literal)
+                            token ":" (operator)
+                            literal (Alternative):
+                                token "0.123" (number_literal)
+                        token "," (separator)
+                        object_members (Concatenation):
+                            object_member (Concatenation):
+                                token "string" (string_literal)
+                                token ":" (operator)
+                                literal (Alternative):
+                                    token "hello" (string_literal)
+                            token "," (separator)
+                            object_members (Concatenation):
+                                object_member (Concatenation):
+                                    token "array" (string_literal)
+                                    token ":" (operator)
+                                    literal (Alternative):
+                                        array_literal (Concatenation):
+                                            token "[" (separator)
+                                            array_members (Concatenation):
+                                                literal (Alternative):
+                                                    token "hello" (string_literal)
+                                                token "," (separator)
+                                                array_members (Concatenation):
+                                                    literal (Alternative):
+                                                        token "world" (string_literal)
+                                            token "]" (separator)
+                                token "," (separator)
+                                object_members (Concatenation):
+                                    object_member (Concatenation):
+                                        token "object" (string_literal)
+                                        token ":" (operator)
+                                        literal (Alternative):
+                                            object_literal (Concatenation):
+                                                token "{" (separator)
+                                                object_members (Concatenation):
+                                                    object_member (Concatenation):
+                                                        token "hello" (string_literal)
+                                                        token ":" (operator)
+                                                        literal (Alternative):
+                                                            token "world" (string_literal)
+                                                token "}" (separator)
+        token "}" (separator)

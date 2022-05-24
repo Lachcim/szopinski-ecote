@@ -1,0 +1,3 @@
+root = hello_world;
+hello_world = concat(named_hello, "world");
+named_hello = "hello";

@@ -1,0 +1,18 @@
+super root (SuperRoot):
+    root (Concatenation):
+        unnamed Terminal of type identifier:
+            token "hello" (identifier)
+        unnamed Concatenation:
+            unnamed Terminal of value ";":
+                token ";" (separator)
+            unnamed Concatenation:
+                unnamed Terminal of value ";":
+                    token ";" (separator)
+                unnamed Concatenation:
+                    unnamed Terminal of value "++":
+                        token "++" (operator)
+                    unnamed Concatenation:
+                        unnamed Terminal of type number_literal:
+                            token "0.123" (number_literal)
+                        unnamed Terminal of type string_literal:
+                            token "world" (string_literal)
